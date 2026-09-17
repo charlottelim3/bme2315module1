@@ -2,9 +2,9 @@
 import csv
 
 class Patient:
-    all_patients = []
+    all_patients = [] # list of patients
     def __init__(self, sex: str, ageofD: float,yearsEd: float , genotype: str, ageofSym : str,
-                 cogStat: str, abeta42: float, pTAU: float ):
+                 cogStat: str, abeta42: float, pTAU: float ): # initialization
         self.sex = sex
         self.ageofD = ageofD
         self.yearsEd = yearsEd
@@ -15,17 +15,17 @@ class Patient:
         self.pTAU = pTAU
         Patient.all_patients.append(self)
 
-    def __repr__(self):  # prints object when printed, can define however you want
+    def __repr__(self):  # prints object when printed
         return (f"{self.sex} | Age of Death: {self.ageofD} | Years of Education: {self.yearsEd} | APOE Genotype: {self.genotype} | {self.cogStat} | abeta42: {self.abeta42} pg/ug | pTAU: {self.pTAU} pg/ug")
 
-    @classmethod
+    @classmethod # retrieves genotype of a patient
     def get_patient_genotype(cls, genotype):
         for patient in Patient.all_patients:
             if genotype == patient.genotype:
                 return patient
 
     @classmethod
-    def instantiate_from_csv(cls, filename: str):
+    def instantiate_from_csv(cls, filename: str): # pulls patients from file
         # the code below will open the .csv file and create a list of all the rows in your spreadsheet
         with open(filename, encoding="utf8") as f:
             reader = csv.DictReader(f)
@@ -35,7 +35,6 @@ class Patient:
                 Patient(sex=row['Sex'],ageofSym=row['Age of Dementia diagnosis'], ageofD=int(row['Age at Death']),genotype=row['APOE Genotype'],cogStat=row['Cognitive Status'],
                     yearsEd=int(row['Years of education']),abeta42=float(row['ABeta42 pg/ug']), pTAU=float(row['pTAU pg/ug']))
 
-# sex,ageofSym, ageofD,genotype,cogStat, yearsEd,abeta42, pTAU
     @classmethod # filter by attribute
     def filter(cls, list, sex: str = "any", ageofSym: int = "any", ageofD: int = "any", genotype: str = "any",
                cogStat: str = "any", yearsEd: int = "any", abeta42: str = "any", pTAU: str = "any"):
