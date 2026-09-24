@@ -26,84 +26,115 @@ import matplotlib.pyplot as plt
 from scipy import stats
 import numpy as np
 import statistics
+import pandas as pd
+from sklearn.linear_model import LinearRegression
 
-# %% stats for bar plot (anova)
-abeta42_APOE_Genotype_2_3 = []
-abeta42_APOE_Genotype_3_3 = []
-abeta42_APOE_Genotype_3_4 = []
-abeta42_APOE_Genotype_4_4 = []
+# # %% stats for bar plot (anova)
+# abeta42_APOE_Genotype_2_3 = []
+# abeta42_APOE_Genotype_3_3 = []
+# abeta42_APOE_Genotype_3_4 = []
+# abeta42_APOE_Genotype_4_4 = []
+#
+# for p in Patient.filter(Patient.all_patients, genotype = "2_3"): #create patient lists
+#     abeta42_APOE_Genotype_2_3.append(p.abeta42)
+# for p in Patient.filter(Patient.all_patients, genotype = "3_3"): #create patient lists
+#     abeta42_APOE_Genotype_3_3.append(p.abeta42)
+# for p in Patient.filter(Patient.all_patients, genotype = "3_4"): #create patient lists
+#     abeta42_APOE_Genotype_3_4.append(p.abeta42)
+# for p in Patient.filter(Patient.all_patients, genotype = "4_4"): #create patient lists
+#     abeta42_APOE_Genotype_4_4.append(p.abeta42)
+#
+# # check for normality
+# for name, group in zip(
+#     ["2/3", "3/3", "3/4", "4/4"],
+#     [abeta42_APOE_Genotype_2_3, abeta42_APOE_Genotype_3_3, abeta42_APOE_Genotype_3_4, abeta42_APOE_Genotype_4_4]
+# ):
+#     stat, p = stats.shapiro(group)
+#     print(f"{name}: p = {p:.4f}") # not normal at all LOL
+#     # 2/3: p = 0.0005 3/3: p = 0.0000 3/4: p = 0.0000 4/4: p = 0.0076
+#
+# # check for equal variance
+# stat, p = stats.levene(abeta42_APOE_Genotype_2_3, abeta42_APOE_Genotype_3_3, abeta42_APOE_Genotype_3_4, abeta42_APOE_Genotype_4_4)
+#
+# print(f"Levene's test: p = {p:.4f}") #omg variances aren't different Levene's test: p = 0.2491
+#
+# # kruskal-wallis test
+# stat, p = stats.kruskal(abeta42_APOE_Genotype_2_3, abeta42_APOE_Genotype_3_3, abeta42_APOE_Genotype_3_4, abeta42_APOE_Genotype_4_4)
+#
+# print(f"Kruskal-Wallis: H = {stat:.3f}, p = {p:.4f}")
+# # results: Kruskal-Wallis: H = 15.127, p = 0.0017 groups are different with statistically significance at the 99% significance level!
+#
+# # %% BAR PLOT (apoe genotype x abeta42)
+#
+# x_2_3_bar = (statistics.mean(abeta42_APOE_Genotype_2_3)) # means
+# x_3_3_bar = (statistics.mean(abeta42_APOE_Genotype_3_3)) # means
+# x_3_4_bar = (statistics.mean(abeta42_APOE_Genotype_3_4)) # means
+# x_4_4_bar = (statistics.mean(abeta42_APOE_Genotype_4_4)) # means
+#
+#
+# abeta42_2_3_stdev = (statistics.stdev(abeta42_APOE_Genotype_2_3)) #standard devs
+# abeta42_3_3_stdev = (statistics.stdev(abeta42_APOE_Genotype_3_3)) #standard devs
+# abeta42_3_4_stdev = (statistics.stdev(abeta42_APOE_Genotype_3_4)) #standard devs
+# abeta42_4_4_stdev = (statistics.stdev(abeta42_APOE_Genotype_4_4)) #standard devs
+#
+#
+# genotype_cols = ['2/3', '3/3', '3/4','4/4'] # make graphs
+# mean_genotype = [x_2_3_bar, x_3_3_bar, x_3_4_bar, x_4_4_bar]
+# stdev_genotype = [abeta42_2_3_stdev, abeta42_3_3_stdev, abeta42_3_4_stdev, abeta42_4_4_stdev]
+# yerr = [np.zeros(len(mean_genotype)), stdev_genotype]
+#
+# plt.bar(genotype_cols, mean_genotype, yerr=yerr, capsize=10, color=["blue", "orange", "purple", "red"]) # plot graphs
+# plt.title("Average Amyloid-Beta 42 of APOE Genotypes")
+# plt.xlabel("APOE Genotype")
+# plt.ylabel("Average Amyloid-Beta 42 (pg/ug)")
+# plt.text( # stats
+#     0.5, 0.95,
+#     f"Kruskal-Wallis: H = {stat:.3f}, p = {p:.4f}",
+#     transform=plt.gca().transAxes,
+#     ha="center")
+# plt.show()
 
-for p in Patient.filter(Patient.all_patients, genotype = "2_3"): #create patient lists
-    abeta42_APOE_Genotype_2_3.append(p.abeta42)
-for p in Patient.filter(Patient.all_patients, genotype = "3_3"): #create patient lists
-    abeta42_APOE_Genotype_3_3.append(p.abeta42)
-for p in Patient.filter(Patient.all_patients, genotype = "3_4"): #create patient lists
-    abeta42_APOE_Genotype_3_4.append(p.abeta42)
-for p in Patient.filter(Patient.all_patients, genotype = "4_4"): #create patient lists
-    abeta42_APOE_Genotype_4_4.append(p.abeta42)
-    
-# check for normality
-for name, group in zip(
-    ["2/3", "3/3", "3/4", "4/4"],
-    [abeta42_APOE_Genotype_2_3, abeta42_APOE_Genotype_3_3, abeta42_APOE_Genotype_3_4, abeta42_APOE_Genotype_4_4]
-):
-    stat, p = stats.shapiro(group)
-    print(f"{name}: p = {p:.4f}") # not normal at all LOL
-    # 2/3: p = 0.0005 3/3: p = 0.0000 3/4: p = 0.0000 4/4: p = 0.0076
 
-# check for equal variance
-stat, p = stats.levene(abeta42_APOE_Genotype_2_3, abeta42_APOE_Genotype_3_3, abeta42_APOE_Genotype_3_4, abeta42_APOE_Genotype_4_4)
+# %% SCATTER PLOT (yearsEd x abeta42)
+patient_yearsEd = [] # lists
+patient_abeta42 = []
+for p in Patient.all_patients: # add dogs to list
+    patient_yearsEd.append(p.yearsEd)
+for p in Patient.all_patients:
+    patient_abeta42.append(p.abeta42)
+X = np.array(patient_yearsEd).reshape(-1, 1) # independent var
+y = np.array(patient_abeta42)  # Dependent variable
 
-print(f"Levene's test: p = {p:.4f}") #omg variances aren't different Levene's test: p = 0.2491
+model = LinearRegression() # linear regression
+model.fit(X,y)
+slope = model.coef_[0]
+intercept = model.intercept_
+r2 = model.score(X, y)
+equation = f"y = {slope:.2f}x + {intercept:.2f}\nR^2 = {r2:.2f}"
+y_pred = model.predict(X)
+plt.text(np.max(X), np.max(y), equation, color="red", fontsize=12, horizontalalignment='center', verticalalignment='top')
 
-# kruskal-wallis test
-stat, p = stats.kruskal(abeta42_APOE_Genotype_2_3, abeta42_APOE_Genotype_3_3, abeta42_APOE_Genotype_3_4, abeta42_APOE_Genotype_4_4)
+plt.scatter(X, y, color='purple') # plots plot
+plt.plot(X, y_pred, color="red")
+plt.xlabel('Years of Education')
+plt.ylabel('Amyloid-Beta 42 (pg/ug)')
+plt.title('Years of Education vs Amyloid-Beta 42')
+plt.show() # one outlier-- get rid of for project?
 
-print(f"Kruskal-Wallis: H = {stat:.3f}, p = {p:.4f}")
-# results: Kruskal-Wallis: H = 15.127, p = 0.0017 groups are statistically significant at the 95% significance level!
+# %% testing for outliers
+Q1 = np.percentile(patient_abeta42, 25)
+Q3 = np.percentile(patient_abeta42, 75)
 
-# %% BAR PLOT (apoe genotype x abeta42)
+IQR = Q3 - Q1
 
-x_2_3_bar = (statistics.mean(abeta42_APOE_Genotype_2_3)) # means
-x_3_3_bar = (statistics.mean(abeta42_APOE_Genotype_3_3)) # means
-x_3_4_bar = (statistics.mean(abeta42_APOE_Genotype_3_4)) # means
-x_4_4_bar = (statistics.mean(abeta42_APOE_Genotype_4_4)) # means
+lower_bound = Q1 - 2.7 * IQR # flags for 1% extreme outliers
+upper_bound = Q3 + 2.7 * IQR
 
+outliers = [
+    x for x in patient_abeta42
+    if x < lower_bound or x > upper_bound
+]
 
-abeta42_2_3_stdev = (statistics.stdev(abeta42_APOE_Genotype_2_3)) #standard devs
-abeta42_3_3_stdev = (statistics.stdev(abeta42_APOE_Genotype_3_3)) #standard devs
-abeta42_3_4_stdev = (statistics.stdev(abeta42_APOE_Genotype_3_4)) #standard devs
-abeta42_4_4_stdev = (statistics.stdev(abeta42_APOE_Genotype_4_4)) #standard devs
-
-
-genotype_cols = ['2/3', '3/3', '3/4','4/4'] # make graphs
-mean_genotype = [x_2_3_bar, x_3_3_bar, x_3_4_bar, x_4_4_bar]
-stdev_genotype = [abeta42_2_3_stdev, abeta42_3_3_stdev, abeta42_3_4_stdev, abeta42_4_4_stdev]
-yerr = [np.zeros(len(mean_genotype)), stdev_genotype]
-
-plt.bar(genotype_cols, mean_genotype, yerr=yerr, capsize=10, color=["blue", "orange", "purple", "red"]) # plot graphs
-plt.title("Average Amyloid-Beta 42 of APOE Genotypes")
-plt.xlabel("APOE Genotype")
-plt.ylabel("Average Amyloid-Beta 42 (pg/ug)")
-plt.text( # stats
-    0.5, 0.95,
-    f"Kruskal-Wallis: H = {stat:.3f}, p = {p:.4f}",
-    transform=plt.gca().transAxes,
-    ha="center")
-plt.show()
-
-
-#%% SCATTER PLOT (yearsEd x abeta42)
-# patient_yearsEd = [] # lists
-# patient_abeta42 = []
-# for p in Patient.all_patients: # add dogs to list
-#     patient_yearsEd.append(p.yearsEd)
-# for p in Patient.all_patients:
-#     patient_abeta42.append(p.abeta42)
-# X = [patient_yearsEd]  # Independent variable
-# y = [patient_abeta42]   # Dependent variable
-# plt.scatter(X, y, color='purple') # plots plot
-# plt.xlabel('Years of Education')
-# plt.ylabel('Amyloid-Beta 42 (pg/ug)')
-# plt.title('Years of Education vs Amyloid-Beta 42')
-# plt.show() # one outlier-- get rid of for project?
+print("Lower bound:", lower_bound) # -95.739736845625
+print("Upper bound:", upper_bound) # 177.491842111375
+print("Outliers:", outliers)
