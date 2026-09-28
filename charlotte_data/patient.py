@@ -19,11 +19,11 @@ class Patient:
     def __repr__(self):  # prints object when printed
         return (f"{self.sex} | Age of Death: {self.ageofD} | Years of Education: {self.yearsEd} | APOE Genotype: {self.genotype} | {self.cogStat} | abeta42: {self.abeta42} pg/ug | pTAU: {self.pTAU} pg/ug")
 
-    @classmethod # retrieves genotype of a patient
-    def get_patient_genotype(cls, genotype):
-        for patient in Patient.all_patients:
-            if genotype == patient.genotype:
-                return patient
+    # @classmethod # retrieves genotype of a patient
+    # def get_patient_genotype(cls, genotype):
+    #     for patient in Patient.all_patients:
+    #         if genotype == patient.genotype:
+    #             return patient
 
     @classmethod
     def instantiate_from_csv(cls, filename: str): # pulls patients from file
@@ -45,7 +45,7 @@ class Patient:
 
     @classmethod # filter by attribute
     def filter(cls, list, sex: str = "any", ageofSym: int = "any", ageofD: int = "any", genotype: str = "any",
-               cogStat: str = "any", yearsEd: int = "any", highestEd: str = "any", abeta42: str = "any", pTAU: str = "any", outlier: bool = False):
+               cogStat: str = "any", yearsEd: int = "any", highestEd: str = "any", abeta42: str = "any", pTAU: str = "any"):
         all_patients = list
         remove_list = []
         attr_list = (

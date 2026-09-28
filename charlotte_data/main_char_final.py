@@ -136,7 +136,7 @@ plt.show() # one outlier-- get rid of for project?
 # lower_bound = Q1 - 2.7 * IQR # flags for 1% extreme outliers
 # upper_bound = Q3 + 2.7 * IQR
 
-# for directly top 0.5% and 99.5%:
+# for directly bottom 0.5% and top 99.5%:
 lower_bound = np.percentile(patient_abeta42, 0.5)
 upper_bound = np.percentile(patient_abeta42, 99.5)
 
