@@ -37,7 +37,7 @@ class Patient:
 
     @classmethod # filter by attribute
     def filter(cls, list, sex: str = "any", ageofSym: int = "any", ageofD: int = "any", genotype: str = "any",
-               cogStat: str = "any", yearsEd: int = "any", abeta42: str = "any", pTAU: str = "any"):
+               cogStat: str = "any", yearsEd: int = "any", abeta42: str = "any", pTAU: str = "any", outlier: bool = False):
         all_patients = list
         remove_list = []
         attr_list = (
@@ -67,6 +67,5 @@ class Patient:
                         remove_list.append(patient)
                 all_patients = [patient for patient in all_patients if patient not in remove_list]
                 remove_list.clear()
-
         return all_patients
 

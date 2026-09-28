@@ -98,10 +98,23 @@ from sklearn.linear_model import LinearRegression
 # %% SCATTER PLOT (yearsEd x abeta42)
 patient_yearsEd = [] # lists
 patient_abeta42 = []
-for p in Patient.all_patients: # add dogs to list
-    patient_yearsEd.append(p.yearsEd)
+# for p in Patient.all_patients: # add dogs to list
+#     patient_yearsEd.append(p.yearsEd)
+# for p in Patient.all_patients:
+#     patient_abeta42.append(p.abeta42)
+
+# remove outliers?
+remove_list = []
 for p in Patient.all_patients:
+        if p.abeta42 < 0.031835158285 or p.abeta42 > 945.6276521849929:
+            remove_list.append(p)
+for p in remove_list:
+        Patient.all_patients.remove(p)
+
+for p in Patient.all_patients:
+    patient_yearsEd.append(p.yearsEd)
     patient_abeta42.append(p.abeta42)
+
 X = np.array(patient_yearsEd).reshape(-1, 1) # independent var
 y = np.array(patient_abeta42)  # Dependent variable
 
@@ -122,19 +135,28 @@ plt.title('Years of Education vs Amyloid-Beta 42')
 plt.show() # one outlier-- get rid of for project?
 
 # %% testing for outliers
-Q1 = np.percentile(patient_abeta42, 25)
-Q3 = np.percentile(patient_abeta42, 75)
+# # using interquartile regions (basic from stats)
+# Q1 = np.percentile(patient_abeta42, 25)
+# Q3 = np.percentile(patient_abeta42, 75)
+#
+# IQR = Q3 - Q1
 
-IQR = Q3 - Q1
+# lower_bound = Q1 - 2.7 * IQR # flags for 1% extreme outliers
+# upper_bound = Q3 + 2.7 * IQR
 
-lower_bound = Q1 - 2.7 * IQR # flags for 1% extreme outliers
-upper_bound = Q3 + 2.7 * IQR
+# for directly top 0.5% and 99.5%:
+lower_bound = np.percentile(patient_abeta42, 0.5)
+upper_bound = np.percentile(patient_abeta42, 99.5)
 
 outliers = [
     x for x in patient_abeta42
     if x < lower_bound or x > upper_bound
 ]
-
+# for aB42 levels
 print("Lower bound:", lower_bound) # -95.739736845625
 print("Upper bound:", upper_bound) # 177.491842111375
 print("Outliers:", outliers)
+# results:
+# Lower bound: 0.031835158285
+# Upper bound: 945.6276521849929
+# Outliers: [1412.566961, 0.019621053]
