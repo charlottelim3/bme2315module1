@@ -32,6 +32,10 @@ for p in Patient.filter(Patient.all_patients_symptomatic, highestEd = "Graduate 
 for p in Patient.filter(Patient.all_patients_symptomatic, highestEd = "Professional"): #create patient lists
     grad_school_ageSym.append(p.ageofSym)
 
+print("High School:", len(high_school_ageSym), high_school_ageSym)
+print("Trade School:", len(trade_school_ageSym), trade_school_ageSym)
+print("Bachelors:", len(bachelors_ageSym), bachelors_ageSym)
+print("Graduate:", len(grad_school_ageSym), grad_school_ageSym)
 # check for normality
 for name, group in zip(
     ["High School", "Trade School", "Bachelors", "Graduate School"],
@@ -89,10 +93,6 @@ plt.show()
 # %% SCATTER PLOT (yearsEd x abeta42)
 patient_yearsEd = [] # lists
 patient_abeta42 = []
-# for p in Patient.all_patients: # add dogs to list
-#     patient_yearsEd.append(p.yearsEd)
-# for p in Patient.all_patients:
-#     patient_abeta42.append(p.abeta42)
 
 # removing outliers
 remove_list = []
