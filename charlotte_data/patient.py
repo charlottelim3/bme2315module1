@@ -3,11 +3,12 @@ import csv
 
 class Patient:
     all_patients = [] # list of patients
-    def __init__(self, sex: str, ageofD: float,yearsEd: float , genotype: str, ageofSym : str,
+    def __init__(self, sex: str, ageofD: float,yearsEd: float , highestEd: str, genotype: str, ageofSym : str,
                  cogStat: str, abeta42: float, pTAU: float ): # initialization
         self.sex = sex
         self.ageofD = ageofD
         self.yearsEd = yearsEd
+        self.highestEd = highestEd
         self.genotype = genotype
         self.ageofSym = ageofSym
         self.cogStat = cogStat
@@ -18,11 +19,11 @@ class Patient:
     def __repr__(self):  # prints object when printed
         return (f"{self.sex} | Age of Death: {self.ageofD} | Years of Education: {self.yearsEd} | APOE Genotype: {self.genotype} | {self.cogStat} | abeta42: {self.abeta42} pg/ug | pTAU: {self.pTAU} pg/ug")
 
-    @classmethod # retrieves genotype of a patient
-    def get_patient_genotype(cls, genotype):
-        for patient in Patient.all_patients:
-            if genotype == patient.genotype:
-                return patient
+    # @classmethod # retrieves genotype of a patient
+    # def get_patient_genotype(cls, genotype):
+    #     for patient in Patient.all_patients:
+    #         if genotype == patient.genotype:
+    #             return patient
 
     @classmethod
     def instantiate_from_csv(cls, filename: str): # pulls patients from file
@@ -30,14 +31,21 @@ class Patient:
         with open(filename, encoding="utf8") as f:
             reader = csv.DictReader(f)
             rows_of_patients = list(reader)
-            # the code below will create a dog object for each row, based on the data:
+
+            # the code below will create a patient object for each row, based on the data:
             for row in rows_of_patients:
-                Patient(sex=row['Sex'],ageofSym=row['Age of Dementia diagnosis'], ageofD=int(row['Age at Death']),genotype=row['APOE Genotype'],cogStat=row['Cognitive Status'],
-                    yearsEd=int(row['Years of education']),abeta42=float(row['ABeta42 pg/ug']), pTAU=float(row['pTAU pg/ug']))
+                ageofSym = row['Age of onset cognitive symptoms']
+
+                if ageofSym == '':
+                    ageofSym = None
+                else:
+                    ageofSym = int(ageofSym)
+                Patient(sex=row['Sex'],ageofSym=ageofSym, ageofD=int(row['Age at Death']),genotype=row['APOE Genotype'],cogStat=row['Cognitive Status'],
+                    yearsEd=int(row['Years of education']),highestEd=row['Highest level of education'], abeta42=float(row['ABeta42 pg/ug']), pTAU=float(row['pTAU pg/ug']))
 
     @classmethod # filter by attribute
     def filter(cls, list, sex: str = "any", ageofSym: int = "any", ageofD: int = "any", genotype: str = "any",
-               cogStat: str = "any", yearsEd: int = "any", abeta42: str = "any", pTAU: str = "any"):
+               cogStat: str = "any", yearsEd: int = "any", highestEd: str = "any", abeta42: str = "any", pTAU: str = "any"):
         all_patients = list
         remove_list = []
         attr_list = (
@@ -47,6 +55,7 @@ class Patient:
             genotype,
             cogStat,
             yearsEd,
+            highestEd,
             abeta42,
             pTAU
         )
@@ -57,6 +66,7 @@ class Patient:
             "genotype",
             "cogStat",
             "yearsEd",
+            "highestEd",
             "abeta42",
             "pTAU"
 )
@@ -67,6 +77,5 @@ class Patient:
                         remove_list.append(patient)
                 all_patients = [patient for patient in all_patients if patient not in remove_list]
                 remove_list.clear()
-
         return all_patients
 
