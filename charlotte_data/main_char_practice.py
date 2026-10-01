@@ -23,10 +23,7 @@ Patient.instantiate_from_csv("/Users/charlottelim/Library/CloudStorage/OneDrive-
 
 # %% patient plots
 import matplotlib.pyplot as plt
-from scipy import stats
 import numpy as np
-import statistics
-import pandas as pd
 from sklearn.linear_model import LinearRegression
 
 # # %% stats for bar plot (anova)
